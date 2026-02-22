@@ -1,7 +1,7 @@
 {
-  "name": "mentraclaw",
+  "name": "faceclaw",
   "version": "1.0.0",
-  "description": "MentraClaw - Give your AI eyes, ears, and voice through smart glasses",
+  "description": "FaceClaw - Give your AI eyes, ears, and voice. Platform-agnostic AI wearable interface.",
   "main": "api/index.js",
   "type": "module",
   "scripts": {

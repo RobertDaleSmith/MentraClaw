@@ -1,8 +1,10 @@
-# 🦅 MentraClaw
+# 🦞 FaceClaw
 
-**Give your AI eyes, ears, and voice through smart glasses**
+**Give your AI eyes, ears, and voice**
 
-*MentraClaw is the sensory extension for OpenClaw AI - if OpenClaw gives your AI hands to manipulate the world, MentraClaw gives it eyes to see, ears to hear, and voice to speak directly on your head.*
+*FaceClaw is the universal AI wearable interface - if OpenClaw gives your AI hands to manipulate the world, FaceClaw gives it eyes to see, ears to hear, and voice to speak directly from your face.*
+
+**Platform-agnostic. Future-ready. Scalable across any smart glasses + any AI.**
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRobertDaleSmith%2Fopenclaw-mentra-bridge)
 
