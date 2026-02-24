@@ -1,0 +1,31 @@
+{
+  "id": "mentraos-plugin",
+  "channels": ["mentraos"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "description": "Enable MentraOS channel",
+        "default": false
+      },
+      "apiKey": {
+        "type": "string",
+        "description": "MentraOS API key for sending messages to smart glasses"
+      },
+      "apiUrl": {
+        "type": "string",
+        "description": "MentraOS API URL",
+        "default": "https://api.mentra.glass"
+      },
+      "webhookPort": {
+        "type": "number",
+        "description": "Port for webhook server to receive MentraOS events",
+        "default": 3978,
+        "minimum": 1024,
+        "maximum": 65535
+      }
+    }
+  }
+}

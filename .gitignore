@@ -1,30 +1,7 @@
-# Dependencies
 node_modules/
-npm-debug.log*
-
-# Environment variables
+dist/
+*.js
+*.d.ts
+!src/**
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Vercel
-.vercel
-
-# Logs
-*.log
-
-# OS generated files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-.env*.local

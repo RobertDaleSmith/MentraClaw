@@ -1,21 +1,40 @@
 {
-  "name": "faceclaw",
-  "version": "1.0.0",
-  "description": "FaceClaw - Give your AI eyes, ears, and voice. Platform-agnostic AI wearable interface.",
-  "main": "api/index.js",
+  "name": "@openclaw/mentraos-plugin",
+  "version": "2.0.0",
+  "description": "MentraOS smart glasses channel plugin for OpenClaw",
+  "main": "index.ts",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'No build step needed for Vercel functions'",
-    "deploy": "vercel --prod"
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
   },
-  "dependencies": {},
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@mentra/sdk": "^2.1.29",
+    "zod": "^3.22.0"
+  },
   "devDependencies": {
-    "@types/node": "^22",
-    "@vercel/node": "^3.0.15",
-    "typescript": "^5"
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "openclaw": ">=2026.2.0"
   },
   "engines": {
-    "node": ">=18"
-  }
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "openclaw",
+    "mentraos",
+    "smart-glasses",
+    "channel-plugin",
+    "voice",
+    "ar"
+  ],
+  "author": "OpenClaw Community",
+  "license": "MIT"
 }

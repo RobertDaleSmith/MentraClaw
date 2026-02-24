@@ -1,223 +1,185 @@
-# 🦞 FaceClaw
+# MentraOS OpenClaw Plugin
 
-**Give your AI eyes, ears, and voice**
+Bidirectional communication channel plugin for MentraOS smart glasses integration with OpenClaw.
 
-*FaceClaw is the universal AI wearable interface - if OpenClaw gives your AI hands to manipulate the world, FaceClaw gives it eyes to see, ears to hear, and voice to speak directly from your face.*
+## Features
 
-**Platform-agnostic. Future-ready. Scalable across any smart glasses + any AI.**
+- **Bidirectional Communication**: Receive voice transcriptions and photos from MentraOS, send responses back via TTS
+- **Webhook Server**: Built-in webhook server to receive MentraOS events
+- **Voice Transcriptions**: Process voice input from smart glasses users
+- **Photo Processing**: Handle photos captured with smart glasses camera
+- **TTS Responses**: Send text responses back to glasses as speech
+- **Session Management**: Handle user sessions and conversation state
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRobertDaleSmith%2Fopenclaw-mentra-bridge)
+## Configuration
 
-## 🏗️ Architecture
+Add the MentraOS channel configuration to your OpenClaw config:
 
+```json
+{
+  "channels": {
+    "mentraos": {
+      "enabled": true,
+      "apiKey": "your-mentraos-api-key-here",
+      "apiUrl": "https://api.mentra.glass",
+      "webhookPort": 3978
+    }
+  }
+}
 ```
-Smart Glasses ↔ MentraOS App ↔ MentraOS Cloud ↔ Vercel Webhook ↔ OpenClaw ↔ AI Agent
+
+### Configuration Options
+
+- `enabled` (boolean): Enable/disable the MentraOS channel
+- `apiKey` (string): Your MentraOS API key for sending TTS responses
+- `apiUrl` (string): MentraOS API base URL (default: https://api.mentra.glass)
+- `webhookPort` (number): Port for webhook server (default: 3978, range: 1024-65535)
+
+## Setup Instructions
+
+### 1. Install and Configure
+
+The plugin is already installed in your OpenClaw extensions directory. Update your OpenClaw configuration with the MentraOS settings above.
+
+### 2. Obtain MentraOS API Key
+
+1. Go to [console.mentra.glass](https://console.mentra.glass/)
+2. Create or select your MentraOS app
+3. Copy your API key to the configuration
+
+### 3. Set Up Public Webhook URL
+
+Since MentraOS needs to send webhooks to your OpenClaw instance, you need a public URL:
+
+**Using ngrok (recommended for testing):**
+```bash
+ngrok http 3978
+```
+This will give you a URL like `https://abc123.ngrok.io`
+
+**Using Tailscale Funnel:**
+```bash
+tailscale funnel 3978
 ```
 
-This serverless bridge receives voice transcriptions and photos from MentraOS smart glasses and forwards them to OpenClaw for AI processing. Responses are sent back through the MentraOS ecosystem for text-to-speech playback on the glasses.
+### 4. Configure MentraOS App
 
-## ✨ Features
+In the MentraOS developer console:
+1. Set your app's webhook URL to: `https://your-public-url/webhook`
+2. Enable microphone permissions for voice transcriptions
+3. Enable camera permissions for photo capture (optional)
 
-- 🎤 **Voice transcription forwarding** - Send voice commands to OpenClaw
-- 📷 **Photo analysis** - Send photos for AI analysis via OpenClaw  
-- ⚡ **Serverless architecture** - Auto-scaling on Vercel
-- 🔒 **Secure authentication** - Token-based OpenClaw integration
-- 📊 **Real-time logging** - Monitor all bridge activity
-- 🌐 **Global deployment** - Low latency worldwide
+### 5. Test the Integration
 
-## 🚀 Quick Deploy
+1. Start OpenClaw: `openclaw gateway start`
+2. Check channel status: `openclaw status`
+3. The MentraOS channel should show as "OK" if properly configured
+4. Look for webhook server startup logs
 
-### 1-Click Deploy to Vercel
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FRobertDaleSmith%2Fopenclaw-mentra-bridge)
+## How It Works
 
-### Manual Deployment
+### Inbound: MentraOS → OpenClaw
+1. User speaks to smart glasses
+2. MentraOS transcribes speech and sends webhook to `/webhook`
+3. Plugin receives webhook, routes transcription to OpenClaw agent
+4. Agent processes the message and generates response
 
-1. **Clone and setup:**
-   ```bash
-   git clone https://github.com/RobertDaleSmith/openclaw-mentra-bridge.git
-   cd openclaw-mentra-bridge
-   npm install
-   ```
+### Outbound: OpenClaw → MentraOS  
+1. OpenClaw agent generates response text
+2. Plugin sends response to MentraOS API
+3. MentraOS converts text to speech and plays on glasses
+4. User hears the response
 
-2. **Deploy to Vercel:**
-   ```bash
-   vercel --prod
-   ```
+### Photo Processing
+1. User takes photo with smart glasses camera
+2. MentraOS sends photo data via webhook
+3. Plugin routes photo to OpenClaw agent for analysis
+4. Agent analyzes photo and generates description/response
+5. Response is sent back as speech
 
-3. **Configure environment variables in Vercel:**
-   - `OPENCLAW_TOKEN` - Your OpenClaw authentication token
-   - `OPENCLAW_URL` - Your OpenClaw gateway URL (e.g., `https://your-openclaw.com`)
+## Webhook Endpoints
 
-## 🔧 Configuration
+The plugin exposes these endpoints:
 
-### Environment Variables
+- `POST /webhook` - Main webhook endpoint for MentraOS events
+- `GET /health` - Health check endpoint
 
-Set these in your Vercel project settings:
+## Supported Event Types
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `OPENCLAW_TOKEN` | OpenClaw authentication token | `961d6392e1a960cc...` |
-| `OPENCLAW_URL` | OpenClaw gateway URL | `https://your-openclaw.com` |
+- `transcription` - Voice transcriptions from smart glasses microphone
+- `photo` - Photos captured with smart glasses camera  
+- `session_start` - User session initialization
+- `session_end` - User session termination
 
-### MentraOS Setup
+## Troubleshooting
 
-1. **Register your app:**
-   - Go to [console.mentraglass.com](https://console.mentraglass.com)
-   - Create a new app
-   - Set webhook URL to: `https://your-app.vercel.app/api/webhook`
+### Channel Shows "SETUP - not configured"
+- Verify `apiKey` is set in your config
+- Ensure `enabled: true` is set
+- Restart OpenClaw after config changes
 
-2. **Install on glasses:**
-   - Use MentraOS mobile app
-   - Install your bridge app
-   - Start talking to OpenClaw!
+### Webhook Server Not Starting
+- Check if port is already in use: `lsof -i :3978`
+- Try a different `webhookPort` in config
+- Check OpenClaw logs for error messages
 
-## 🌐 API Endpoints
+### MentraOS Not Receiving Responses
+- Verify your MentraOS API key is correct
+- Check that `apiUrl` matches your MentraOS instance
+- Look for API errors in OpenClaw logs
 
-| Endpoint | Method | Description |
-|----------|---------|-------------|
-| `/api/webhook` | POST | Main webhook for MentraOS data |
-| `/api/health` | GET | Health check and status |
-| `/` | GET | Status dashboard |
+### No Webhooks Received
+- Verify ngrok/tunnel is running and accessible
+- Check MentraOS console webhook URL configuration
+- Test webhook endpoint: `curl https://your-url/health`
+
+## Development
+
+### Building from Source
+
+```bash
+cd /path/to/mentraos-plugin
+npm install
+npm run build
+```
+
+### Plugin Structure
+
+- `src/channel.ts` - Main channel plugin implementation
+- `src/webhook.ts` - Webhook server and MentraOS API client
+- `src/runtime.ts` - OpenClaw runtime interface
+- `src/lifecycle.ts` - Plugin lifecycle management
+- `index.ts` - Plugin entry point and registration
+
+## API Reference
 
 ### Webhook Payload Format
 
-The `/api/webhook` endpoint expects these payload types:
+```typescript
+interface MentraWebhookPayload {
+  type: 'transcription' | 'photo' | 'session_start' | 'session_end';
+  userId: string;
+  sessionId: string;
+  data?: {
+    text?: string;           // Transcription text
+    isFinal?: boolean;       // Whether transcription is final
+    imageBuffer?: string;    // Base64 encoded image
+    mimeType?: string;       // Image MIME type
+  };
+}
+```
+
+### MentraOS API Response Format
 
 ```typescript
-// Voice transcription
+// TTS Request to MentraOS API
 {
-  "type": "transcription",
-  "userId": "user123",
-  "sessionId": "session456",
-  "data": {
-    "text": "What's the weather like?",
-    "isFinal": true
-  }
-}
-
-// Photo analysis
-{
-  "type": "photo", 
-  "userId": "user123",
-  "sessionId": "session456",
-  "data": {
-    "imageBuffer": "base64-encoded-image",
-    "mimeType": "image/jpeg"
-  }
+  userId: string;
+  text: string;
+  voice: string;
 }
 ```
 
-## 🛠️ Development
+## License
 
-### Local Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start local development server
-npm run dev
-
-# Visit http://localhost:3000
-```
-
-### Project Structure
-
-```
-├── api/
-│   ├── webhook.ts          # Main webhook handler
-│   └── health.ts           # Health check endpoint
-├── public/
-│   └── index.html          # Status dashboard
-├── package.json
-├── vercel.json             # Vercel configuration
-└── README.md
-```
-
-### Testing Webhooks
-
-You can test the webhook locally using curl:
-
-```bash
-curl -X POST http://localhost:3000/api/webhook \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "transcription",
-    "userId": "test-user", 
-    "sessionId": "test-session",
-    "data": {
-      "text": "Hello OpenClaw",
-      "isFinal": true
-    }
-  }'
-```
-
-## 🔒 Security
-
-- **Token Authentication:** All OpenClaw requests use secure bearer token auth
-- **Environment Variables:** Sensitive data stored as Vercel environment variables  
-- **HTTPS Only:** All communication encrypted in transit
-- **Input Validation:** Webhook payloads are validated before processing
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-1. **"OpenClaw API error: 401"**
-   - Check your `OPENCLAW_TOKEN` environment variable
-   - Ensure OpenClaw is accessible from Vercel
-
-2. **"Webhook not receiving data"**
-   - Verify webhook URL in MentraOS console
-   - Check Vercel function logs for errors
-
-3. **"Function timeout"**
-   - OpenClaw requests should complete within Vercel's 10s limit
-   - Check OpenClaw response times
-
-### Debugging
-
-View real-time logs in Vercel dashboard:
-1. Go to your Vercel project
-2. Click "Functions" tab
-3. Click on `/api/webhook` function
-4. View invocation logs
-
-## 📊 Monitoring
-
-### Health Check
-
-Visit `https://your-app.vercel.app/api/health` to check:
-- Service status
-- Environment configuration
-- OpenClaw connectivity
-
-### Vercel Analytics
-
-Enable Vercel Analytics for:
-- Request volume and performance
-- Error rates
-- Geographic distribution
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test with real MentraOS webhooks
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see [LICENSE](LICENSE) for details.
-
-## 🔗 Links
-
-- **MentraOS:** [mentraglass.com](https://mentraglass.com)
-- **OpenClaw:** [openclaw.ai](https://openclaw.ai)
-- **Vercel:** [vercel.com](https://vercel.com)
-- **Developer Console:** [console.mentraglass.com](https://console.mentraglass.com)
-
----
-
-**Built with ❤️ for the smart glasses revolution**
+MIT - See LICENSE file for details
