@@ -10,7 +10,9 @@
 
 ---
 
-An [OpenClaw](https://github.com/openclaw/openclaw) channel plugin that connects [MentraOS](https://mentra.glass) smart glasses to OpenClaw agents via the `@mentra/sdk` AppServer. Talk to your AI through your glasses.
+An [OpenClaw](https://github.com/openclaw/openclaw) channel plugin that connects [**Mentra Live**](https://mentraglass.com/live) smart glasses to OpenClaw AI agents via the `@mentra/sdk` AppServer. Talk to your AI through your glasses.
+
+> **Built for [Mentra Live](https://mentraglass.com/live)** — open-source smart glasses with an app store. [Get a pair →](https://mentraglass.com/live)
 
 ## Features
 
